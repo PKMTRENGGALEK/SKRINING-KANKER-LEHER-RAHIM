@@ -25,41 +25,42 @@
       body {
         background-color: #fdeef4;
         font-family: "Roboto", sans-serif;
-        font-size: 14px;
+        font-size: 12.5px;
       }
 
       .container {
-        max-width: 1150px;
-        margin-top: 35px;
+        max-width: 1100px;
+        margin-top: 30px;
       }
 
       .card {
         border: none;
-        border-radius: 16px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        border-radius: 14px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
         background-color: #fff;
       }
 
       h3 {
         color: #a42c56;
         font-weight: 700;
+        font-size: 18px;
       }
 
       p {
-        color: #7a4a58;
-        margin-bottom: 10px;
+        font-size: 12px;
+        color: #444;
+        margin-bottom: 0;
       }
 
       footer {
         text-align: center;
-        margin-top: 40px;
+        margin-top: 30px;
         color: #a42c56;
-        font-size: 13px;
+        font-size: 11px;
       }
 
-      /* Table styling */
       table.dataTable {
-        font-size: 13px;
+        font-size: 11.5px;
       }
 
       table.dataTable thead {
@@ -70,13 +71,13 @@
 
       table.dataTable thead th {
         vertical-align: middle;
-        padding: 8px 10px !important;
+        padding: 6px 8px !important;
         font-weight: 600;
-        font-size: 13.5px;
+        font-size: 11.5px;
       }
 
       table.dataTable tbody td {
-        padding: 6px 10px !important;
+        padding: 5px 8px !important;
         vertical-align: middle;
       }
 
@@ -84,9 +85,9 @@
         background-color: #a42c56 !important;
         border: none;
         color: white !important;
-        border-radius: 6px;
-        padding: 4px 10px;
-        font-size: 13px;
+        border-radius: 5px;
+        padding: 3px 8px;
+        font-size: 11px;
       }
 
       .dt-buttons .btn:hover {
@@ -97,52 +98,74 @@
         background: #a42c56 !important;
         color: #fff !important;
         border: none;
-        border-radius: 5px;
+        border-radius: 4px;
+      }
+
+      #instansiFilter {
+        border-radius: 6px;
+        padding: 4px 6px;
+        border: 1px solid #ccc;
+        font-size: 12px;
+      }
+
+      .filter-container {
+        margin-bottom: 10px;
       }
 
       .spinner {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 250px;
-      }
-
-      #dataTable_filter input {
-        border-radius: 8px;
-        padding: 4px 8px;
-      }
-
-      .dataTables_length select {
-        border-radius: 8px;
-        padding: 2px 6px;
+        height: 200px;
       }
     </style>
   </head>
 
   <body>
     <div class="container">
-      <div class="text-center mb-4">
+      <div class="text-center mb-3">
         <img
           src="https://pkmtrenggalek.github.io/SIP/assets/pkm.png"
           alt="Logo"
-          width="80"
-          class="mb-2"
+          width="70"
+          class="mb-1"
         />
         <h3>Lihat Data Deteksi Dini Kanker Leher Rahim</h3>
         <p>Puskesmas Trenggalek 2025</p>
       </div>
 
-      <div class="card p-4">
+      <div class="card p-3">
         <div id="loading" class="spinner">
           <div class="spinner-border text-danger" role="status">
             <span class="visually-hidden">Memuat...</span>
           </div>
         </div>
 
+        <!-- Filter Instansi -->
+        <div
+          class="filter-container row align-items-center mb-2"
+          id="filterSection"
+          style="display: none"
+        >
+          <div class="col-md-6">
+            <label for="instansiFilter" class="form-label fw-semibold mb-1"
+              >Filter Instansi:</label
+            >
+            <select id="instansiFilter" class="form-select form-select-sm">
+              <option value="">Semua Instansi</option>
+            </select>
+          </div>
+          <div class="mt-2">
+            <a href="analisa.html" class="btn btn-primary btn-sm shadow"
+              >Analisa</a
+            >
+          </div>
+        </div>
+
         <div class="table-responsive" id="tableContainer" style="display: none">
           <table
             id="dataTable"
-            class="table table-striped table-hover align-middle table-bordered"
+            class="table table-striped table-hover align-middle table-sm table-bordered"
             style="width: 100%"
           >
             <thead>
@@ -176,11 +199,37 @@
       const SHEET_URL =
         "https://script.google.com/macros/s/AKfycbyn--EmVE92SClAXjwuKWKpvw58T-N9yEh4csZ-AweJBGe-OeZzVs4Auib6kJubclKnnw/exec";
 
+      let dataTable;
+
       async function ambilData() {
         try {
           const res = await fetch(SHEET_URL);
           const data = await res.json();
-          tampilkanTabel(data);
+
+          // 🔹 Format timestamp ke format lokal (dd/mm/yyyy hh:mm:ss)
+          const formatTanggal = (isoString) => {
+            if (!isoString) return "";
+            const date = new Date(isoString);
+            if (isNaN(date)) return isoString;
+            const pad = (n) => n.toString().padStart(2, "0");
+            return `${pad(date.getDate())}/${pad(
+              date.getMonth() + 1
+            )}/${date.getFullYear()} ${pad(date.getHours())}:${pad(
+              date.getMinutes()
+            )}:${pad(date.getSeconds())}`;
+          };
+
+          const formatted = data.map((row) => {
+            const newRow = { ...row };
+            for (const key in newRow) {
+              if (key.toLowerCase().includes("timestamp")) {
+                newRow[key] = formatTanggal(newRow[key]);
+              }
+            }
+            return newRow;
+          });
+
+          tampilkanTabel(formatted);
         } catch (err) {
           document.getElementById("loading").innerHTML =
             "<p class='text-danger text-center'>❌ Gagal mengambil data. Pastikan Apps Script sudah dipublikasikan.</p>";
@@ -209,15 +258,16 @@
           .join("");
 
         document.getElementById("loading").style.display = "none";
+        document.getElementById("filterSection").style.display = "flex";
         document.getElementById("tableContainer").style.display = "block";
 
-        $("#dataTable").DataTable({
+        dataTable = $("#dataTable").DataTable({
           pageLength: 10,
           responsive: true,
           dom:
-            "<'row mb-2'<'col-sm-6'l><'col-sm-6 text-end'B>>" +
+            "<'row mb-1'<'col-sm-6'l><'col-sm-6 text-end'B>>" +
             "<'row'<'col-sm-12'tr>>" +
-            "<'row mt-2'<'col-sm-5'i><'col-sm-7'p>>",
+            "<'row mt-1'<'col-sm-5'i><'col-sm-7'p>>", // 🔹 Tidak ada kotak pencarian
           buttons: [
             { extend: "copy", text: "Copy" },
             { extend: "excel", text: "Excel" },
@@ -225,12 +275,32 @@
             { extend: "print", text: "Print" },
           ],
           language: {
-            search: "Cari:",
             lengthMenu: "Tampilkan _MENU_ data",
             info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
             paginate: { previous: "Sebelumnya", next: "Berikutnya" },
             zeroRecords: "Tidak ada data yang cocok",
           },
+        });
+
+        // 🔹 Tambahkan daftar Instansi unik ke dropdown
+        const instansiSet = new Set();
+        data.forEach((d) => {
+          if (d.Instansi && d.Instansi.trim() !== "")
+            instansiSet.add(d.Instansi);
+        });
+
+        const select = document.getElementById("instansiFilter");
+        instansiSet.forEach((i) => {
+          const opt = document.createElement("option");
+          opt.value = i;
+          opt.textContent = i;
+          select.appendChild(opt);
+        });
+
+        // 🔹 Event filter instansi
+        select.addEventListener("change", function () {
+          const val = this.value;
+          dataTable.column(headers.indexOf("Instansi")).search(val).draw();
         });
       }
 

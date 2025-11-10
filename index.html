@@ -17,6 +17,18 @@
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
 
+    <!-- Select2 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+      rel="stylesheet"
+    />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
       body {
         background-color: #fdeef4;
@@ -98,6 +110,15 @@
         padding: 15px 0;
         background-color: #fff;
       }
+
+      /* select2 adjustments */
+      .select2-container--bootstrap-5 .select2-selection {
+        border: none;
+        border-bottom: 2px solid #ccc;
+        border-radius: 0;
+        min-height: 38px;
+        padding-top: 4px;
+      }
     </style>
   </head>
 
@@ -176,6 +197,43 @@
         </div>
 
         <div class="form-group">
+          <label>Instansi</label>
+          <select name="Instansi" id="Instansi" class="form-select">
+            <option value=""></option>
+            <option value="WKRI DPC ST.Maria Trenggalek">
+              WKRI DPC ST.Maria Trenggalek
+            </option>
+            <option value="Dinas Perikanan">Dinas Perikanan</option>
+            <option value="Badan Kepegawaian Daerah">
+              Badan Kepegawaian Daerah
+            </option>
+            <option value="DPMPTSP">DPMPTSP</option>
+            <option value="Pimpinan Daerah Nasyiatul Aisyiyah">
+              Pimpinan Daerah Nasyiatul Aisyiyah
+            </option>
+            <option value="Nasyiatul Aisyiyah">Nasyiatul Aisyiyah</option>
+            <option value="Badan Keuangan Daerah">Badan Keuangan Daerah</option>
+            <option value="Satpol PP dan Kebakaran">
+              Satpol PP dan Kebakaran
+            </option>
+            <option value="Sekretariat DPRD">Sekretariat DPRD</option>
+            <option value="IGTKI-PGRI Trenggalek">IGTKI-PGRI Trenggalek</option>
+            <option value="Bappedalitbang Trenggalek">
+              Bappedalitbang Trenggalek
+            </option>
+            <option value="PGRI Kabupaten Trenggalek">
+              PGRI Kabupaten Trenggalek
+            </option>
+            <option value="Dinas Perumahan Kawasan Permukiman Dan LH">
+              Dinas Perumahan Kawasan Permukiman Dan LH
+            </option>
+            <option value="TP-PKK Kabupaten Trenggalek">
+              TP-PKK Kabupaten Trenggalek
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
           <label>Nomor HP</label>
           <input type="tel" class="form-control" id="hp" />
         </div>
@@ -207,7 +265,6 @@
 
         <div class="form-group">
           <label>Jumlah persalinan dengan Sectio Caesarea (SC)</label>
-          <!-- <input type="number" class="form-control" id="jumlah_sc" /> -->
           <select name="jumlah_sc" id="jumlah_sc" class="form-select">
             <option value=""></option>
             <option value="1">1</option>
@@ -215,7 +272,6 @@
             <option value="3">3</option>
             <option value="4">4</option>
             <option value="5">5</option>
-            <option value="6">6</option>
             <option value="Belum Pernah">Belum Pernah</option>
           </select>
         </div>
@@ -229,55 +285,43 @@
             <option value="3">3</option>
             <option value="4">4</option>
             <option value="5">5</option>
-            <option value="6">6</option>
             <option value="Belum Pernah">Belum Pernah</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>Jumlah abortus / keguguran yang pernah dialami</label>
+          <label>Jumlah abortus / keguguran</label>
           <select name="jumlah_abortus" id="jumlah_abortus" class="form-select">
             <option value=""></option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
             <option value="Belum Pernah">Belum Pernah</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>Jumlah abortus/keguguran yang dilakukan kuret</label>
+          <label>Jumlah abortus/kuret</label>
           <select name="jumlah_kuret" id="jumlah_kuret" class="form-select">
             <option value=""></option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
             <option value="Belum Pernah">Belum Pernah</option>
           </select>
         </div>
 
         <div class="form-group">
           <label>Riwayat kontrasepsi yang pernah dipakai</label>
-          <select
-            name="riwayat_kontrasepsi"
-            id="riwayat_kontrasepsi"
-            class="form-select"
-          >
+          <select id="riwayat_kontrasepsi" class="form-select">
             <option value=""></option>
-            <option value="Suntik">Suntik</option>
-            <option value="Implan">Implan</option>
-            <option value="Iud">Iud</option>
-            <option value="Kb Lainnya">Kb Lainnya</option>
-            <option value="MOW">MOW</option>
-            <option value="Tidak Pernah Menggunakan">
-              Tidak Pernah Menggunakan
-            </option>
+            <option>Suntik</option>
+            <option>Implan</option>
+            <option>Iud</option>
+            <option>Kb Lainnya</option>
+            <option>MOW</option>
+            <option>Tidak Pernah Menggunakan</option>
           </select>
         </div>
 
@@ -302,7 +346,6 @@
 
         <div class="form-group">
           <label>Kontrasepsi yang digunakan saat ini</label>
-          <input type="text" class="form-control" id="kontrasepsi_saat_ini" />
           <select class="form-select" id="kontrasepsi_saat_ini">
             <option value="">Pilih...</option>
             <option>Suntik</option>
@@ -334,12 +377,15 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer>© 2025 Puskesmas Trenggalek. All rights reserved.</footer>
 
-    <!-- Scripts -->
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
+      // Flatpickr
       flatpickr("#tanggal_lahir", {
         dateFormat: "d-m-Y",
         altInput: true,
@@ -347,14 +393,24 @@
         locale: "id",
       });
 
+      // Select2
+      $(document).ready(function () {
+        $("select").select2({
+          theme: "bootstrap-5",
+          placeholder: "Pilih atau cari...",
+          allowClear: true,
+        });
+      });
+
       const scriptURL =
-        "https://script.google.com/macros/s/AKfycbyn--EmVE92SClAXjwuKWKpvw58T-N9yEh4csZ-AweJBGe-OeZzVs4Auib6kJubclKnnw/exec"; // Ganti URL kamu
+        "https://script.google.com/macros/s/AKfycbyn--EmVE92SClAXjwuKWKpvw58T-N9yEh4csZ-AweJBGe-OeZzVs4Auib6kJubclKnnw/exec";
 
       document
         .getElementById("formKesehatan")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
-          const get = (id) => document.getElementById(id).value;
+
+          const get = (id) => document.getElementById(id)?.value || "";
 
           const data = {
             email: get("email"),
@@ -366,6 +422,7 @@
             desa: get("desa"),
             kecamatan: get("kecamatan"),
             kabupaten: get("kabupaten"),
+            instansi: get("Instansi"),
             hp: get("hp"),
             usia_hubungan: get("usia_hubungan"),
             usia_hamil_pertama: get("usia_hamil_pertama"),
@@ -381,8 +438,14 @@
             riwayat_kanker: get("riwayat_kanker"),
           };
 
-          console.log("📤 Mengirim data ke Google Sheets...");
-          console.table(data);
+          Swal.fire({
+            title: "Mengirim data...",
+            text: "Mohon tunggu sebentar",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
 
           try {
             await fetch(scriptURL, {
@@ -391,11 +454,22 @@
               body: JSON.stringify(data),
             });
 
-            console.log(
-              "✅ Data terkirim ke Google Apps Script (no-cors mode)"
-            );
+            Swal.fire({
+              icon: "success",
+              title: "Berhasil!",
+              text: "Data berhasil dikirim.",
+              timer: 2500,
+              showConfirmButton: false,
+            });
+
             e.target.reset();
+            $("select").val("").trigger("change");
           } catch (err) {
+            Swal.fire({
+              icon: "error",
+              title: "Gagal Mengirim!",
+              text: "Terjadi kesalahan saat mengirim data.",
+            });
             console.error("❌ Gagal mengirim data:", err);
           }
         });

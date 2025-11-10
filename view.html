@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lihat Data - Deteksi Dini Kanker Leher Rahim</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- DataTables -->
+    <link
+      href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        background-color: #fdeef4;
+        font-family: "Roboto", sans-serif;
+        font-size: 14px;
+      }
+
+      .container {
+        max-width: 1150px;
+        margin-top: 35px;
+      }
+
+      .card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        background-color: #fff;
+      }
+
+      h3 {
+        color: #a42c56;
+        font-weight: 700;
+      }
+
+      p {
+        color: #7a4a58;
+        margin-bottom: 10px;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #a42c56;
+        font-size: 13px;
+      }
+
+      /* Table styling */
+      table.dataTable {
+        font-size: 13px;
+      }
+
+      table.dataTable thead {
+        background: linear-gradient(135deg, #a42c56, #f8a5c2);
+        color: white;
+        text-align: center;
+      }
+
+      table.dataTable thead th {
+        vertical-align: middle;
+        padding: 8px 10px !important;
+        font-weight: 600;
+        font-size: 13.5px;
+      }
+
+      table.dataTable tbody td {
+        padding: 6px 10px !important;
+        vertical-align: middle;
+      }
+
+      .dt-buttons .btn {
+        background-color: #a42c56 !important;
+        border: none;
+        color: white !important;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 13px;
+      }
+
+      .dt-buttons .btn:hover {
+        background-color: #8e2348 !important;
+      }
+
+      .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: #a42c56 !important;
+        color: #fff !important;
+        border: none;
+        border-radius: 5px;
+      }
+
+      .spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 250px;
+      }
+
+      #dataTable_filter input {
+        border-radius: 8px;
+        padding: 4px 8px;
+      }
+
+      .dataTables_length select {
+        border-radius: 8px;
+        padding: 2px 6px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="text-center mb-4">
+        <img
+          src="https://pkmtrenggalek.github.io/SIP/assets/pkm.png"
+          alt="Logo"
+          width="80"
+          class="mb-2"
+        />
+        <h3>Lihat Data Deteksi Dini Kanker Leher Rahim</h3>
+        <p>Puskesmas Trenggalek 2025</p>
+      </div>
+
+      <div class="card p-4">
+        <div id="loading" class="spinner">
+          <div class="spinner-border text-danger" role="status">
+            <span class="visually-hidden">Memuat...</span>
+          </div>
+        </div>
+
+        <div class="table-responsive" id="tableContainer" style="display: none">
+          <table
+            id="dataTable"
+            class="table table-striped table-hover align-middle table-bordered"
+            style="width: 100%"
+          >
+            <thead>
+              <tr id="tableHead"></tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <footer>© 2025 Puskesmas Trenggalek</footer>
+
+    <!-- JS: jQuery + Bootstrap + DataTables -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+    <script>
+      const SHEET_URL =
+        "https://script.google.com/macros/s/AKfycbyn--EmVE92SClAXjwuKWKpvw58T-N9yEh4csZ-AweJBGe-OeZzVs4Auib6kJubclKnnw/exec";
+
+      async function ambilData() {
+        try {
+          const res = await fetch(SHEET_URL);
+          const data = await res.json();
+          tampilkanTabel(data);
+        } catch (err) {
+          document.getElementById("loading").innerHTML =
+            "<p class='text-danger text-center'>❌ Gagal mengambil data. Pastikan Apps Script sudah dipublikasikan.</p>";
+        }
+      }
+
+      function tampilkanTabel(data) {
+        if (!data || data.length === 0) {
+          document.getElementById("loading").innerHTML =
+            "<p class='text-danger text-center'>Tidak ada data ditemukan.</p>";
+          return;
+        }
+
+        const headers = Object.keys(data[0]);
+        const headRow = document.getElementById("tableHead");
+        headRow.innerHTML = headers.map((h) => `<th>${h}</th>`).join("");
+
+        const body = document.getElementById("tableBody");
+        body.innerHTML = data
+          .map(
+            (row) =>
+              `<tr>${headers
+                .map((h) => `<td>${row[h] || ""}</td>`)
+                .join("")}</tr>`
+          )
+          .join("");
+
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("tableContainer").style.display = "block";
+
+        $("#dataTable").DataTable({
+          pageLength: 10,
+          responsive: true,
+          dom:
+            "<'row mb-2'<'col-sm-6'l><'col-sm-6 text-end'B>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row mt-2'<'col-sm-5'i><'col-sm-7'p>>",
+          buttons: [
+            { extend: "copy", text: "Copy" },
+            { extend: "excel", text: "Excel" },
+            { extend: "pdf", text: "PDF" },
+            { extend: "print", text: "Print" },
+          ],
+          language: {
+            search: "Cari:",
+            lengthMenu: "Tampilkan _MENU_ data",
+            info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+            paginate: { previous: "Sebelumnya", next: "Berikutnya" },
+            zeroRecords: "Tidak ada data yang cocok",
+          },
+        });
+      }
+
+      ambilData();
+    </script>
+  </body>
+</html>

@@ -12,119 +12,159 @@
     />
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- XLSX -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
       body {
         background: #fdeef4;
         font-family: "Roboto", sans-serif;
       }
+
       .container {
         max-width: 1100px;
         margin-top: 40px;
       }
+
       .card {
         border: none;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
       }
+
       h3 {
         color: #a42c56;
         font-weight: bold;
       }
+
       footer {
         text-align: center;
         margin-top: 50px;
         color: #a42c56;
       }
+
       .chart-container {
         position: relative;
         height: 250px;
       }
+
       .legend-list {
         font-size: 14px;
         margin-top: 10px;
         line-height: 1.6;
       }
+
       .legend-item {
         display: flex;
         justify-content: space-between;
         border-bottom: 1px dashed #ccc;
       }
+
+      /* 🌸 Desain khusus untuk total responden */
+      .card-total {
+        background: linear-gradient(135deg, #a42c56, #f8a5c2);
+        color: white;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 8px 20px rgba(164, 44, 86, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card-total:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(164, 44, 86, 0.4);
+      }
+
+      .card-total h5 {
+        font-size: 1.2rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        opacity: 0.9;
+      }
+
+      .card-total h1 {
+        font-size: 4rem;
+        font-weight: 700;
+        margin-top: 10px;
+      }
     </style>
   </head>
+
   <body>
     <div class="container">
-      <div class="text-center mb-4">
+      <div class="text-center mb-5">
         <img
           src="https://pkmtrenggalek.github.io/SIP/assets/pkm.png"
           alt="Logo"
           width="100"
         />
         <h3>Analisa Data Deteksi Dini Kanker Leher Rahim</h3>
-        <p>Puskesmas Trenggalek 2025</p>
+        <p>
+          <a href="view.html" style="color: black">Puskesmas Trenggalek 2025</a>
+        </p>
       </div>
-
-      <!-- 🟢 Filter & Download Section -->
-      <div class="card p-4 mb-4">
-        <h5 class="text-center mb-3">
-          Download Data Excel Berdasarkan Instansi
-        </h5>
-        <div class="row align-items-center g-3">
-          <div class="col-md-8">
-            <select name="Instansi" id="Instansi" class="form-select">
-              <option value="">-- Pilih Instansi --</option>
-              <option value="WKRI DPC ST.Maria Trenggalek">
-                WKRI DPC ST.Maria Trenggalek
-              </option>
-              <option value="Dinas Perikanan">Dinas Perikanan</option>
-              <option value="Badan Kepegawaian Daerah">
-                Badan Kepegawaian Daerah
-              </option>
-              <option value="DPMPTSP">DPMPTSP</option>
-              <option value="Pimpinan Daerah Nasyiatul Aisyiyah">
-                Pimpinan Daerah Nasyiatul Aisyiyah
-              </option>
-              <option value="Nasyiatul Aisyiyah">Nasyiatul Aisyiyah</option>
-              <option value="Badan Keuangan Daerah">
-                Badan Keuangan Daerah
-              </option>
-              <option value="Satpol PP dan Kebakaran">
-                Satpol PP dan Kebakaran
-              </option>
-              <option value="Sekretariat DPRD">Sekretariat DPRD</option>
-              <option value="IGTKI-PGRI Trenggalek">
-                IGTKI-PGRI Trenggalek
-              </option>
-              <option value="Bappedalitbang Trenggalek">
-                Bappedalitbang Trenggalek
-              </option>
-              <option value="PGRI Kabupaten Trenggalek">
-                PGRI Kabupaten Trenggalek
-              </option>
-              <option value="Dinas Perumahan Kawasan Permukiman Dan LH">
-                Dinas Perumahan Kawasan Permukiman Dan LH
-              </option>
-              <option value="TP-PKK Kabupaten Trenggalek">
-                TP-PKK Kabupaten Trenggalek
-              </option>
-            </select>
-          </div>
-          <div class="col-md-4 text-center">
-            <button class="btn btn-danger w-100" onclick="downloadExcel()">
-              Download Excel
-            </button>
+      <div class="row g-4 align-items-stretch mb-4">
+        <!-- 🟢 Filter & Download Section -->
+        <div class="container mt-5">
+          <div class="card p-4">
+            <h5 class="text-center mb-3">
+              Download Data Excel Berdasarkan Instansi
+            </h5>
+            <div class="row align-items-center g-3">
+              <div class="col-md-8">
+                <select name="Instansi" id="filterInstansi" class="form-select">
+                  <option value="">-- Pilih Instansi --</option>
+                  <option value="WKRI DPC ST.Maria Trenggalek">
+                    WKRI DPC ST.Maria Trenggalek
+                  </option>
+                  <option value="Dinas Perikanan">Dinas Perikanan</option>
+                  <option value="Badan Kepegawaian Daerah">
+                    Badan Kepegawaian Daerah
+                  </option>
+                  <option value="DPMPTSP">DPMPTSP</option>
+                  <option value="Pimpinan Daerah Nasyiatul Aisyiyah">
+                    Pimpinan Daerah Nasyiatul Aisyiyah
+                  </option>
+                  <option value="Nasyiatul Aisyiyah">Nasyiatul Aisyiyah</option>
+                  <option value="Badan Keuangan Daerah">
+                    Badan Keuangan Daerah
+                  </option>
+                  <option value="Satpol PP dan Kebakaran">
+                    Satpol PP dan Kebakaran
+                  </option>
+                  <option value="Sekretariat DPRD">Sekretariat DPRD</option>
+                  <option value="IGTKI-PGRI Trenggalek">
+                    IGTKI-PGRI Trenggalek
+                  </option>
+                  <option value="Bappedalitbang Trenggalek">
+                    Bappedalitbang Trenggalek
+                  </option>
+                  <option value="PGRI Kabupaten Trenggalek">
+                    PGRI Kabupaten Trenggalek
+                  </option>
+                  <option value="Dinas Perumahan Kawasan Permukiman Dan LH">
+                    Dinas Perumahan Kawasan Permukiman Dan LH
+                  </option>
+                  <option value="TP-PKK Kabupaten Trenggalek">
+                    TP-PKK Kabupaten Trenggalek
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-4 text-center">
+                <button class="btn btn-danger w-100" onclick="downloadExcel()">
+                  Download Excel
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- 🟣 Statistik dan Grafik -->
-      <div class="row g-4">
+      <div class="row g-4 align-items-stretch">
         <div class="col-md-4">
-          <div class="card p-4 text-center">
+          <div class="card card-total text-center p-4">
             <h5>Total Responden</h5>
-            <h2 id="totalResponden">0</h2>
+            <h1 id="totalResponden">0</h1>
           </div>
         </div>
 
@@ -159,10 +199,12 @@
 
     <footer>© 2025 Puskesmas Trenggalek</footer>
 
+    <!-- XLSX -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
     <script>
       const SHEET_URL =
         "https://script.google.com/macros/s/AKfycbyn--EmVE92SClAXjwuKWKpvw58T-N9yEh4csZ-AweJBGe-OeZzVs4Auib6kJubclKnnw/exec";
-
       let globalData = [];
 
       async function ambilData() {
@@ -243,21 +285,20 @@
         });
       }
 
-      // 🧾 Download Excel Berdasarkan Instansi
       function downloadExcel() {
         const instansi = document
-          .getElementById("Instansi")
+          .getElementById("filterInstansi")
           .value.trim()
           .toLowerCase();
 
         const filtered = globalData.filter(
           (d) =>
             !instansi ||
-            (d["Instansi"] && d["Instansi"].toLowerCase().includes(instansi))
+            (d.Instansi && d.Instansi.toLowerCase().includes(instansi))
         );
 
         if (filtered.length === 0) {
-          alert("Data tidak ditemukan untuk instansi tersebut.");
+          alert("Data tidak ditemukan untuk filter tersebut.");
           return;
         }
 
@@ -265,10 +306,10 @@
           if (!tgl) return "";
           const date = new Date(tgl);
           if (isNaN(date)) return tgl;
-          const d = String(date.getDate()).padStart(2, "0");
-          const m = String(date.getMonth() + 1).padStart(2, "0");
-          const y = date.getFullYear();
-          return `${d}/${m}/${y}`;
+          const day = String(date.getDate()).padStart(2, "0");
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const year = date.getFullYear();
+          return `${day}/${month}/${year}`;
         };
 
         const formatted = filtered.map((row) => {
@@ -284,10 +325,7 @@
         const ws = XLSX.utils.json_to_sheet(formatted);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Data Filter");
-        XLSX.writeFile(
-          wb,
-          `Data_Deteksi_Dini_${instansi || "Semua_Instansi"}.xlsx`
-        );
+        XLSX.writeFile(wb, `Data_Deteksi_Dini_${instansi || "Semua"}.xlsx`);
       }
 
       ambilData();

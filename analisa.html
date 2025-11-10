@@ -12,6 +12,8 @@
     />
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- XLSX -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
       body {
@@ -38,7 +40,7 @@
       }
       .chart-container {
         position: relative;
-        height: 250px; /* ukuran chart lebih kecil */
+        height: 250px;
       }
       .legend-list {
         font-size: 14px;
@@ -54,7 +56,7 @@
   </head>
   <body>
     <div class="container">
-      <div class="text-center mb-5">
+      <div class="text-center mb-4">
         <img
           src="https://pkmtrenggalek.github.io/SIP/assets/pkm.png"
           alt="Logo"
@@ -64,6 +66,60 @@
         <p>Puskesmas Trenggalek 2025</p>
       </div>
 
+      <!-- 🟢 Filter & Download Section -->
+      <div class="card p-4 mb-4">
+        <h5 class="text-center mb-3">
+          Download Data Excel Berdasarkan Instansi
+        </h5>
+        <div class="row align-items-center g-3">
+          <div class="col-md-8">
+            <select name="Instansi" id="Instansi" class="form-select">
+              <option value="">-- Pilih Instansi --</option>
+              <option value="WKRI DPC ST.Maria Trenggalek">
+                WKRI DPC ST.Maria Trenggalek
+              </option>
+              <option value="Dinas Perikanan">Dinas Perikanan</option>
+              <option value="Badan Kepegawaian Daerah">
+                Badan Kepegawaian Daerah
+              </option>
+              <option value="DPMPTSP">DPMPTSP</option>
+              <option value="Pimpinan Daerah Nasyiatul Aisyiyah">
+                Pimpinan Daerah Nasyiatul Aisyiyah
+              </option>
+              <option value="Nasyiatul Aisyiyah">Nasyiatul Aisyiyah</option>
+              <option value="Badan Keuangan Daerah">
+                Badan Keuangan Daerah
+              </option>
+              <option value="Satpol PP dan Kebakaran">
+                Satpol PP dan Kebakaran
+              </option>
+              <option value="Sekretariat DPRD">Sekretariat DPRD</option>
+              <option value="IGTKI-PGRI Trenggalek">
+                IGTKI-PGRI Trenggalek
+              </option>
+              <option value="Bappedalitbang Trenggalek">
+                Bappedalitbang Trenggalek
+              </option>
+              <option value="PGRI Kabupaten Trenggalek">
+                PGRI Kabupaten Trenggalek
+              </option>
+              <option value="Dinas Perumahan Kawasan Permukiman Dan LH">
+                Dinas Perumahan Kawasan Permukiman Dan LH
+              </option>
+              <option value="TP-PKK Kabupaten Trenggalek">
+                TP-PKK Kabupaten Trenggalek
+              </option>
+            </select>
+          </div>
+          <div class="col-md-4 text-center">
+            <button class="btn btn-danger w-100" onclick="downloadExcel()">
+              Download Excel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🟣 Statistik dan Grafik -->
       <div class="row g-4">
         <div class="col-md-4">
           <div class="card p-4 text-center">
@@ -107,9 +163,12 @@
       const SHEET_URL =
         "https://script.google.com/macros/s/AKfycbyn--EmVE92SClAXjwuKWKpvw58T-N9yEh4csZ-AweJBGe-OeZzVs4Auib6kJubclKnnw/exec";
 
+      let globalData = [];
+
       async function ambilData() {
         const res = await fetch(SHEET_URL);
         const data = await res.json();
+        globalData = data;
         tampilkanAnalisa(data);
       }
 
@@ -168,7 +227,7 @@
               legend: { display: false },
               title: { display: true, text: label },
             },
-            cutout: "60%", // bentuk donat lebih ramping
+            cutout: "60%",
           },
         });
       }
@@ -182,6 +241,53 @@
           item.innerHTML = `<span>${nama}</span><strong>${jumlah}</strong>`;
           container.appendChild(item);
         });
+      }
+
+      // 🧾 Download Excel Berdasarkan Instansi
+      function downloadExcel() {
+        const instansi = document
+          .getElementById("Instansi")
+          .value.trim()
+          .toLowerCase();
+
+        const filtered = globalData.filter(
+          (d) =>
+            !instansi ||
+            (d["Instansi"] && d["Instansi"].toLowerCase().includes(instansi))
+        );
+
+        if (filtered.length === 0) {
+          alert("Data tidak ditemukan untuk instansi tersebut.");
+          return;
+        }
+
+        const formatTanggal = (tgl) => {
+          if (!tgl) return "";
+          const date = new Date(tgl);
+          if (isNaN(date)) return tgl;
+          const d = String(date.getDate()).padStart(2, "0");
+          const m = String(date.getMonth() + 1).padStart(2, "0");
+          const y = date.getFullYear();
+          return `${d}/${m}/${y}`;
+        };
+
+        const formatted = filtered.map((row) => {
+          const newRow = { ...row };
+          for (const key in newRow) {
+            if (key.toLowerCase().includes("tanggal")) {
+              newRow[key] = formatTanggal(newRow[key]);
+            }
+          }
+          return newRow;
+        });
+
+        const ws = XLSX.utils.json_to_sheet(formatted);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Data Filter");
+        XLSX.writeFile(
+          wb,
+          `Data_Deteksi_Dini_${instansi || "Semua_Instansi"}.xlsx`
+        );
       }
 
       ambilData();

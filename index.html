@@ -16,6 +16,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
 
     <!-- Select2 -->
     <link
@@ -26,6 +27,7 @@
       href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
       rel="stylesheet"
     />
+
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -112,13 +114,47 @@
       }
 
       /* select2 adjustments */
-      .select2-container--bootstrap-5 .select2-selection {
+      /* .select2-container--bootstrap-5 .select2-selection {
         border: none;
         border-bottom: 2px solid #ccc;
         border-radius: 0;
         min-height: 38px;
         padding-top: 4px;
+      } */
+
+      /* Flatpickr fix agar tidak tertutup */
+      .flatpickr-calendar {
+        z-index: 99999 !important;
       }
+
+      /* Style input tanggal agar konsisten */
+      .flatpickr-input,
+      .flatpickr-alt-input {
+        display: block;
+        width: 100%;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        border-radius: 0;
+        padding: 6px 12px;
+        box-shadow: none;
+        background: transparent;
+      }
+
+      .flatpickr-input:focus,
+      .flatpickr-alt-input:focus {
+        outline: none;
+        border-color: #a42c56;
+      }
+
+      .flatpickr-input[readonly],
+      .flatpickr-alt-input[readonly] {
+        cursor: pointer;
+      }
+
+      /* pastikan Select2 dropdown tidak menutup kalender */
+      /* .select2-container--open {
+        z-index: 2000;
+      } */
     </style>
   </head>
 
@@ -199,7 +235,7 @@
 
         <div class="form-group">
           <label>Instansi</label>
-          <select name="Instansi" id="Instansi" class="form-select">
+          <select name="Instansi" id="Instansi" class="form-select" required>
             <option value=""></option>
             <option value="Puskesmas Trenggalek">Puskesmas Trenggalek</option>
             <option value="WKRI DPC ST.Maria Trenggalek">
@@ -388,23 +424,26 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
+      // Select2
+      // $(document).ready(function () {
+      //   $("select").select2({
+      //     theme: "bootstrap-5",
+      //     placeholder: "Pilih atau cari...",
+      //     allowClear: true,
+      //     dropdownParent: $(document.body),
+      //   });
+      // });
+
       // Flatpickr
       flatpickr("#tanggal_lahir", {
         dateFormat: "d-m-Y",
         altInput: true,
         altFormat: "j F Y",
         locale: "id",
+        allowInput: false,
       });
 
-      // Select2
-      $(document).ready(function () {
-        $("select").select2({
-          theme: "bootstrap-5",
-          placeholder: "Pilih atau cari...",
-          allowClear: true,
-        });
-      });
-
+      // Kirim ke Google Apps Script
       const scriptURL =
         "https://script.google.com/macros/s/AKfycbyn--EmVE92SClAXjwuKWKpvw58T-N9yEh4csZ-AweJBGe-OeZzVs4Auib6kJubclKnnw/exec";
 
@@ -459,21 +498,18 @@
 
             Swal.fire({
               icon: "success",
-              title: "Berhasil!",
-              text: "Data berhasil dikirim.",
-              timer: 2500,
-              showConfirmButton: false,
+              title: "Data berhasil dikirim!",
+              text: "Terima kasih atas partisipasi Anda.",
             });
 
-            e.target.reset();
+            document.getElementById("formKesehatan").reset();
             $("select").val("").trigger("change");
-          } catch (err) {
+          } catch (error) {
             Swal.fire({
               icon: "error",
               title: "Gagal Mengirim!",
-              text: "Terjadi kesalahan saat mengirim data.",
+              text: "Periksa koneksi internet Anda dan coba lagi.",
             });
-            console.error("❌ Gagal mengirim data:", err);
           }
         });
     </script>
